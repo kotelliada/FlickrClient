@@ -21,6 +21,8 @@
             android:id="@+id/main_tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:tabGravity="fill"
+            app:tabMaxWidth="0dp"
             app:tabSelectedTextColor="@color/white"
             app:tabTextColor="@color/grey_300" />
     </android.support.design.widget.AppBarLayout>
