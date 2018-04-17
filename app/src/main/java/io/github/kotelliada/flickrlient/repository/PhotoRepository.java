@@ -21,6 +21,7 @@ public class PhotoRepository {
 
     private PhotoRepository(PhotoService photoService) {
         this.photoService = photoService;
+        getRandomPhotosFromService();
     }
 
     public static PhotoRepository getInstance(PhotoService photoService) {

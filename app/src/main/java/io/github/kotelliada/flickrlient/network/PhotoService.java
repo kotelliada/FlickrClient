@@ -8,6 +8,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface PhotoService {
-    @GET("services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1&extras=url_s,geo&has_geo=1&per_page=40")
+    @GET("services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1&extras=url_s,geo&has_geo=1&per_page=81")
     Call<List<Photo>> getRandomPhotos(@Query("api_key") String apiKey);
 }

@@ -1,5 +1,6 @@
 package io.github.kotelliada.flickrlient.ui.list;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,10 +15,11 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import io.github.kotelliada.flickrlient.R;
+import io.github.kotelliada.flickrlient.utils.InjectorUtils;
+import io.github.kotelliada.flickrlient.viewmodel.SharedViewModel;
 
 public class PhotoListFragment extends Fragment {
     private Context context;
-    private PhotoAdapter recyclerViewAdapter;
 
     public static PhotoListFragment newInstance() {
         Bundle args = new Bundle();
@@ -48,8 +50,11 @@ public class PhotoListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 3));
-        recyclerViewAdapter = new PhotoAdapter(new ArrayList<>());
+        PhotoAdapter recyclerViewAdapter = new PhotoAdapter(new ArrayList<>());
         recyclerView.setAdapter(recyclerViewAdapter);
+
+        SharedViewModel viewModel = ViewModelProviders.of(getActivity(), InjectorUtils.provideSharedViewModelFactory()).get(SharedViewModel.class);
+        viewModel.getPhotoList().observe(this, recyclerViewAdapter::setPhotoList);
     }
 
     @Override

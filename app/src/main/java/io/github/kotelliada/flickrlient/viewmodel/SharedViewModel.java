@@ -11,12 +11,18 @@ import io.github.kotelliada.flickrlient.repository.PhotoRepository;
 
 public class SharedViewModel extends ViewModel {
     private MutableLiveData<List<Photo>> photoList = new MutableLiveData<>();
+    private PhotoRepository repository;
 
-    public SharedViewModel(PhotoRepository repository) {
-        repository.getPhotoList().observeForever(photoList1 -> this.photoList.setValue(photoList1));
+    SharedViewModel(PhotoRepository repository) {
+        this.repository = repository;
+        this.repository.getPhotoList().observeForever(photoList1 -> this.photoList.setValue(photoList1));
     }
 
     public LiveData<List<Photo>> getPhotoList() {
         return photoList;
+    }
+
+    public void fetchRandomPhotosFromNetwork() {
+        this.repository.getRandomPhotosFromService();
     }
 }
