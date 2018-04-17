@@ -50,6 +50,7 @@ public class PhotoListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.list_swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeColors(context.getResources().getColor(R.color.colorAccent));
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 3));

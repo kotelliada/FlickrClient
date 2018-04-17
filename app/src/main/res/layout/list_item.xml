@@ -11,4 +11,14 @@
         android:layout_height="match_parent"
         android:contentDescription="@null"
         android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/photo_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="4dp"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
 </FrameLayout>

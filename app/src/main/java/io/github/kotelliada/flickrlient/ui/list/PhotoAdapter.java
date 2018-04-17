@@ -11,7 +11,7 @@ import java.util.List;
 import io.github.kotelliada.flickrlient.R;
 import io.github.kotelliada.flickrlient.model.Photo;
 
-public class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
+class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
     private List<Photo> photoList;
 
     PhotoAdapter(List<Photo> photoList) {

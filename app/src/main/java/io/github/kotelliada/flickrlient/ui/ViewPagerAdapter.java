@@ -10,7 +10,7 @@ import io.github.kotelliada.flickrlient.R;
 import io.github.kotelliada.flickrlient.ui.list.PhotoListFragment;
 import io.github.kotelliada.flickrlient.ui.map.MapFragment;
 
-public class ViewPagerAdapter extends FragmentPagerAdapter {
+class ViewPagerAdapter extends FragmentPagerAdapter {
     private final Context context;
 
     ViewPagerAdapter(FragmentManager fm, Context context) {
