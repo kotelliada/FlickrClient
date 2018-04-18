@@ -6,7 +6,7 @@ import io.github.kotelliada.flickrlient.repository.PhotoRepository;
 import io.github.kotelliada.flickrlient.viewmodel.SharedViewModelFactory;
 
 public class InjectorUtils {
-    public static PhotoRepository provideRepository() {
+    private static PhotoRepository provideRepository() {
         PhotoService photoService = ServiceBuilder.buildService(PhotoService.class);
         return PhotoRepository.getInstance(photoService);
     }

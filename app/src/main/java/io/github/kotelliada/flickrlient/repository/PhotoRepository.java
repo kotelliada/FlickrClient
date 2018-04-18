@@ -18,9 +18,9 @@ import retrofit2.Response;
 public class PhotoRepository {
     private static final String TAG = PhotoRepository.class.getSimpleName();
     private static PhotoRepository instance;
-    private MutableLiveData<List<Photo>> photoList = new MutableLiveData<>();
-    private SingleEventLiveData<Integer> errorMessage = new SingleEventLiveData<>();
-    private PhotoService photoService;
+    private final MutableLiveData<List<Photo>> photoList = new MutableLiveData<>();
+    private final SingleEventLiveData<Integer> errorMessage = new SingleEventLiveData<>();
+    private final PhotoService photoService;
 
     private PhotoRepository(PhotoService photoService) {
         this.photoService = photoService;
@@ -43,6 +43,24 @@ public class PhotoRepository {
 
     public void getRandomPhotosFromService() {
         photoService.getRandomPhotos(ServiceBuilder.API_KEY)
+                .enqueue(new Callback<List<Photo>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<List<Photo>> call, @NonNull Response<List<Photo>> response) {
+                        if (response.isSuccessful())
+                            photoList.setValue(response.body());
+                        else
+                            Log.e(TAG, "PhotoRepository.getRandomPhotosFromService(): " + response.message());
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<List<Photo>> call, @NonNull Throwable t) {
+                        errorMessage.setValue(R.string.no_connection);
+                    }
+                });
+    }
+
+    public void getPhotosByQuery(String query) {
+        photoService.searchPhotos(ServiceBuilder.API_KEY, query)
                 .enqueue(new Callback<List<Photo>>() {
                     @Override
                     public void onResponse(@NonNull Call<List<Photo>> call, @NonNull Response<List<Photo>> response) {

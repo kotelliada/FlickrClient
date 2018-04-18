@@ -11,14 +11,14 @@ import io.github.kotelliada.flickrlient.repository.PhotoRepository;
 import io.github.kotelliada.flickrlient.utils.SingleEventLiveData;
 
 public class SharedViewModel extends ViewModel {
-    private MutableLiveData<List<Photo>> photoList = new MutableLiveData<>();
-    private SingleEventLiveData<Integer> errorMessage = new SingleEventLiveData<>();
-    private PhotoRepository repository;
+    private final MutableLiveData<List<Photo>> photoList = new MutableLiveData<>();
+    private final SingleEventLiveData<Integer> errorMessage = new SingleEventLiveData<>();
+    private final PhotoRepository repository;
 
     SharedViewModel(PhotoRepository repository) {
         this.repository = repository;
-        this.repository.getPhotoList().observeForever(photoList1 -> this.photoList.setValue(photoList1));
-        this.repository.getErrorMessage().observeForever(s -> this.errorMessage.setValue(s));
+        this.repository.getPhotoList().observeForever(this.photoList::setValue);
+        this.repository.getErrorMessage().observeForever(this.errorMessage::setValue);
     }
 
     public LiveData<List<Photo>> getPhotoList() {
@@ -31,5 +31,9 @@ public class SharedViewModel extends ViewModel {
 
     public void fetchRandomPhotosFromNetwork() {
         this.repository.getRandomPhotosFromService();
+    }
+
+    public void fetchPhotosByQuery(String query) {
+        this.repository.getPhotosByQuery(query);
     }
 }

@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
 import io.github.kotelliada.flickrlient.R;
+import io.github.kotelliada.flickrlient.utils.QueryPreferences;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,10 +32,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-
         SearchView searchView = (SearchView) menu.getItem(0).getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
-
         return true;
     }
 }

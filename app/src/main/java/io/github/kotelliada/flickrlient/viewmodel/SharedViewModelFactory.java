@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import io.github.kotelliada.flickrlient.repository.PhotoRepository;
 
 public class SharedViewModelFactory extends ViewModelProvider.NewInstanceFactory {
-    private PhotoRepository repository;
+    private final PhotoRepository repository;
 
     public SharedViewModelFactory(PhotoRepository repository) {
         this.repository = repository;

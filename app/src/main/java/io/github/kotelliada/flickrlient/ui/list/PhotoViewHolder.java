@@ -11,8 +11,8 @@ import io.github.kotelliada.flickrlient.R;
 import io.github.kotelliada.flickrlient.model.Photo;
 
 public class PhotoViewHolder extends RecyclerView.ViewHolder {
-    private ImageView imageView;
-    private TextView titleTextView;
+    private final ImageView imageView;
+    private final TextView titleTextView;
 
     PhotoViewHolder(View itemView) {
         super(itemView);

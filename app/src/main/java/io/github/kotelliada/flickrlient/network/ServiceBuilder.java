@@ -19,7 +19,7 @@ public class ServiceBuilder {
     public static final String API_KEY = "0468d31f28d288781dc9fcade5146b5f";
     private static final String URL = "https://api.flickr.com/";
 
-    private static JsonDeserializer<List<Photo>> customDeserializer = (json, typeOfT, context) -> {
+    private static final JsonDeserializer<List<Photo>> customDeserializer = (json, typeOfT, context) -> {
         List<Photo> photoList = new ArrayList<>();
         JsonObject rootObject = json.getAsJsonObject();
         JsonObject photosObject = rootObject.getAsJsonObject("photos");
@@ -39,17 +39,17 @@ public class ServiceBuilder {
         return photoList;
     };
 
-    private static GsonBuilder gsonBuilder = new GsonBuilder()
+    private static final GsonBuilder gsonBuilder = new GsonBuilder()
             .registerTypeAdapter(new TypeToken<List<Photo>>() {
             }.getType(), customDeserializer);
 
-    private static Gson customGson = gsonBuilder.create();
+    private static final Gson customGson = gsonBuilder.create();
 
-    private static Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
+    private static final Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
             .baseUrl(URL)
             .addConverterFactory(GsonConverterFactory.create(customGson));
 
-    private static Retrofit retrofit = retrofitBuilder.build();
+    private static final Retrofit retrofit = retrofitBuilder.build();
 
     public static <T> T buildService(Class<T> service) {
         return retrofit.create(service);

@@ -7,17 +7,6 @@ public class Photo {
     private String latitude;
     private String longitude;
 
-    public Photo() {
-    }
-
-    public Photo(String id, String title, String url, String latitude, String longitude) {
-        this.id = id;
-        this.title = title;
-        this.url = url;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
     public String getId() {
         return id;
     }
