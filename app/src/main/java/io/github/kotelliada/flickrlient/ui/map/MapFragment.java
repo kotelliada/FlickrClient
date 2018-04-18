@@ -12,18 +12,22 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -35,17 +39,18 @@ import java.util.List;
 import io.github.kotelliada.flickrlient.R;
 import io.github.kotelliada.flickrlient.model.Photo;
 import io.github.kotelliada.flickrlient.utils.InjectorUtils;
+import io.github.kotelliada.flickrlient.utils.QueryPreferences;
 import io.github.kotelliada.flickrlient.viewmodel.SharedViewModel;
 
 public class MapFragment extends Fragment {
     private static final String TAG = "MapFragment";
-    private static final int DEFAULT_ZOOM = 15;
     private static final int ERROR_DIALOG_REQUEST = 1;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
     private Context context;
     private boolean locationPermissionGranted;
     private GoogleMap googleMap;
+    private SharedViewModel viewModel;
 
     public static MapFragment newInstance() {
         Bundle args = new Bundle();
@@ -81,6 +86,38 @@ public class MapFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        SearchView searchView = (SearchView) menu.getItem(0).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                QueryPreferences.setStoredQuery(context, query);
+                getPhotosNetwork();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        searchView.setOnSearchClickListener(v -> {
+            String query = QueryPreferences.getStoredQuery(context);
+            if (query != null)
+                searchView.setQuery(query, false);
+        });
+        ImageView closeButton = searchView.findViewById(R.id.search_close_btn);
+        closeButton.setOnClickListener(v -> {
+            EditText et = searchView.findViewById(R.id.search_src_text);
+            et.setText("");
+            QueryPreferences.clearPreferences(context);
+            getPhotosNetwork();
+        });
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         this.context = null;
@@ -110,7 +147,7 @@ public class MapFragment extends Fragment {
                 }
                 this.googleMap.setMyLocationEnabled(true);
                 this.googleMap.getUiSettings().setZoomGesturesEnabled(true);
-                SharedViewModel viewModel = ViewModelProviders.of(getActivity(), InjectorUtils.provideSharedViewModelFactory()).get(SharedViewModel.class);
+                viewModel = ViewModelProviders.of(getActivity(), InjectorUtils.provideSharedViewModelFactory()).get(SharedViewModel.class);
                 viewModel.getPhotoList().observe(this, photoList -> {
                     this.googleMap.clear();
                     addMarkers(photoList);
@@ -141,12 +178,7 @@ public class MapFragment extends Fragment {
             if (locationPermissionGranted) {
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        Location lastKnownLocation = task.getResult();
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(lastKnownLocation.getLatitude(),
-                                        lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                    } else
+                    if (!task.isSuccessful() || task.getResult() == null)
                         Toast.makeText(context, "Unable to get current location", Toast.LENGTH_SHORT).show();
                 });
             } else
@@ -163,6 +195,14 @@ public class MapFragment extends Fragment {
         } else
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+    }
+
+    private void getPhotosNetwork() {
+        String query = QueryPreferences.getStoredQuery(context);
+        if (query == null)
+            viewModel.fetchRandomPhotosFromNetwork();
+        else
+            viewModel.fetchPhotosByQuery(query);
     }
 
     @Override

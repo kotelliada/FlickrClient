@@ -4,13 +4,13 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import io.github.kotelliada.flickrlient.R;
 import io.github.kotelliada.flickrlient.ui.list.PhotoListFragment;
 import io.github.kotelliada.flickrlient.ui.map.MapFragment;
 
-class ViewPagerAdapter extends FragmentPagerAdapter {
+class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private final Context context;
 
     ViewPagerAdapter(FragmentManager fm, Context context) {

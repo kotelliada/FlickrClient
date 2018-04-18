@@ -30,6 +30,9 @@ import io.github.kotelliada.flickrlient.viewmodel.SharedViewModel;
 public class PhotoListFragment extends Fragment {
     private Context context;
     private SharedViewModel viewModel;
+    private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private SearchView searchView;
 
     public static PhotoListFragment newInstance() {
         Bundle args = new Bundle();
@@ -59,13 +62,13 @@ public class PhotoListFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.list_swipe_refresh_layout);
+        swipeRefreshLayout = view.findViewById(R.id.list_swipe_refresh_layout);
         swipeRefreshLayout.setColorSchemeColors(context.getResources().getColor(R.color.colorAccent));
 
         if (ConnectionUtils.isNetworkAvailableAndConnected(context))
             swipeRefreshLayout.setRefreshing(true);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 3));
         PhotoAdapter recyclerViewAdapter = new PhotoAdapter(new ArrayList<>());
         recyclerView.setAdapter(recyclerViewAdapter);
@@ -96,12 +99,15 @@ public class PhotoListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        SearchView searchView = (SearchView) menu.getItem(0).getActionView();
+        searchView = (SearchView) menu.getItem(0).getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 QueryPreferences.setStoredQuery(context, query);
-                getPhotosNetwork();
+                if (ConnectionUtils.isNetworkAvailableAndConnected(context)) {
+                    swipeRefreshLayout.setRefreshing(true);
+                    getPhotosNetwork();
+                }
                 return true;
             }
 
@@ -120,6 +126,7 @@ public class PhotoListFragment extends Fragment {
             EditText et = searchView.findViewById(R.id.search_src_text);
             et.setText("");
             QueryPreferences.clearPreferences(context);
+            getPhotosNetwork();
         });
 
         super.onCreateOptionsMenu(menu, inflater);
