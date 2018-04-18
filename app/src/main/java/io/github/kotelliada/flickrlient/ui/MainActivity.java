@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
 import io.github.kotelliada.flickrlient.R;
-import io.github.kotelliada.flickrlient.utils.QueryPreferences;
 
 public class MainActivity extends AppCompatActivity {
 
