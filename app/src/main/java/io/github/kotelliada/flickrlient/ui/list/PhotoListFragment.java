@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import io.github.kotelliada.flickrlient.R;
+import io.github.kotelliada.flickrlient.utils.ConnectionUtils;
 import io.github.kotelliada.flickrlient.utils.InjectorUtils;
 import io.github.kotelliada.flickrlient.viewmodel.SharedViewModel;
 
@@ -64,7 +66,17 @@ public class PhotoListFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
         });
 
-        swipeRefreshLayout.setOnRefreshListener(viewModel::fetchRandomPhotosFromNetwork);
+        viewModel.getErrorMessage().observe(this, errorMessageId -> Snackbar.make(recyclerView, context.getResources().getString(errorMessageId), Snackbar.LENGTH_LONG).show());
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            if (ConnectionUtils.isNetworkAvailableAndConnected(context))
+                viewModel.fetchRandomPhotosFromNetwork();
+            else {
+                Snackbar.make(recyclerView, context.getResources().getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
+                if (swipeRefreshLayout.isRefreshing())
+                    swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     @Override

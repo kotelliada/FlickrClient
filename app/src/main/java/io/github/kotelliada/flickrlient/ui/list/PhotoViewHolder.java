@@ -24,6 +24,7 @@ public class PhotoViewHolder extends RecyclerView.ViewHolder {
         Picasso.get()
                 .load(photo.getUrl())
                 .into(this.imageView);
+
         this.titleTextView.setText(photo.getTitle());
     }
 }
