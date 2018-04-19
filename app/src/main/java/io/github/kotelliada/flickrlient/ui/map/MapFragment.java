@@ -9,6 +9,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -38,6 +40,7 @@ import java.util.List;
 
 import io.github.kotelliada.flickrlient.R;
 import io.github.kotelliada.flickrlient.model.Photo;
+import io.github.kotelliada.flickrlient.utils.ConnectionUtils;
 import io.github.kotelliada.flickrlient.utils.InjectorUtils;
 import io.github.kotelliada.flickrlient.utils.QueryPreferences;
 import io.github.kotelliada.flickrlient.viewmodel.SharedViewModel;
@@ -51,6 +54,7 @@ public class MapFragment extends Fragment {
     private boolean locationPermissionGranted;
     private GoogleMap googleMap;
     private SharedViewModel viewModel;
+    private RelativeLayout mapRoot;
 
     public static MapFragment newInstance() {
         Bundle args = new Bundle();
@@ -80,6 +84,7 @@ public class MapFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        this.mapRoot = view.findViewById(R.id.map_root);
         if (isGooglePlayServicesAvailable()) {
             getLocationPermission();
         }
@@ -92,7 +97,10 @@ public class MapFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 QueryPreferences.setStoredQuery(context, query);
-                getPhotosNetwork();
+                if (ConnectionUtils.isNetworkAvailableAndConnected(context))
+                    getPhotosNetwork();
+                else
+                    Snackbar.make(mapRoot, context.getResources().getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
                 return true;
             }
 

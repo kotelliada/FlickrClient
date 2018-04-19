@@ -107,7 +107,8 @@ public class PhotoListFragment extends Fragment {
                 if (ConnectionUtils.isNetworkAvailableAndConnected(context)) {
                     swipeRefreshLayout.setRefreshing(true);
                     getPhotosNetwork();
-                }
+                } else
+                    Snackbar.make(recyclerView, context.getResources().getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
                 return true;
             }
 
